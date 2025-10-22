@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Inventory API Tester</title>
+</head>
+<body>
+  <h1>Inventory API Tester</h1>
+  <p>Token (demo): <code>DEMO_TOKEN_123</code></p>
+  <button id="btnLogin">Login</button>
+  <button id="btnMe">Who am I</button>
+  <button id="btnListCats">List Categories</button>
+  <button id="btnListItems">List Items</button>
+  <pre id="out"></pre>
+<script>
+const BASE = "/api";
+const TOKEN = "DEMO_TOKEN_123";
+const out = document.getElementById("out");
+function log(x){ out.textContent += (typeof x === 'string' ? x : JSON.stringify(x, null, 2)) + "\n"; }
+async function post(url, body, auth=false){
+  const res = await fetch(url, {
+    method:'POST',
+    headers: {'Content-Type':'application/json', ...(auth?{'Authorization':'Bearer '+TOKEN}:{})},
+    body: JSON.stringify(body)
+  });
+  return res.json();
+}
+async function get(url, auth=false){
+  const res = await fetch(url, { headers: auth?{'Authorization':'Bearer '+TOKEN}:{}});
+  return res.json();
+}
+document.getElementById('btnLogin').onclick = async () => {
+  log(await post(`${BASE}/auth_login.php`, {username:'demo', password:'password'}));
+};
+document.getElementById('btnMe').onclick = async () => {
+  log(await get(`${BASE}/auth_me.php`, true));
+};
+document.getElementById('btnListCats').onclick = async () => {
+  log(await get(`${BASE}/categories_get.php`));
+};
+document.getElementById('btnListItems').onclick = async () => {
+  log(await get(`${BASE}/items_get.php`));
+};
+</script>
+</body>
+</html>
